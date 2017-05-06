@@ -26,10 +26,17 @@ class Chessboard extends Component {
   state = {
     pieces: initialPieces,
     turn: 0,
+    transcript: '',
   }
 
   componentDidMount() {
     setTimeout(() => this.movePiece( 'E2', 'E4' ), 2000 );
+
+    this.initSpeechRecognition();
+  }
+
+  initSpeechRecognition() {
+    // grammar.addFromString( 'a | b | c | d | e | f | g | h | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8', 1 );
   }
 
   movePiece( from, to ) {
@@ -117,7 +124,7 @@ class Chessboard extends Component {
   }
 
   render() {
-    const { turn } = this.state;
+    const { turn, transcript } = this.state;
 
     return (
       <View>
@@ -146,6 +153,14 @@ class Chessboard extends Component {
             {this.renderPieces()}
           </View>
         </View>
+
+        <Text style={{
+          color: '#000',
+          fontSize: 2,
+          transform: [
+            { translate: [0, 0, -3] },
+          ],
+        }}>{transcript}</Text>
       </View>
     );
   }
