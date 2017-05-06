@@ -7,6 +7,7 @@ import {
   Text,
   View,
   Image,
+  Animated,
 } from 'react-vr';
 import _ from 'lodash';
 import initialPieces from './initialPieces.js';
@@ -61,48 +62,33 @@ class Chessboard extends Component {
         }}>
           {cellName}
         </Text>
-
-        {( !!piece ) && (
-          <Text style={{
-            color: '#000',
-            fontSize: 0.4,
-            position: 'absolute',
-          }}>
-            {piece.type}
-          </Text>
-        )}
       </View>
     )
   }
 
   renderPieces() {
-    const { board } = this.state;
+    const { pieces } = this.state;
 
-    return (
-      <View style={{
-        position: 'absolute',
-        transform: [
-          { rotateX: -90 },
-          { translate: [BOARD_X, BOARD_Y, BOARD_Z] },
-        ]
-      }}>
-        {board.map( row => (
-          <View style={{ flexDirection: 'row' }}>
-            {( row && row.length > 0 ) && row.map( piece => piece && (
-              <View style={{
-                width: CELL_SIZE,
-                height: CELL_SIZE,
-              }}>
-                <Text style={{
-                  fontSize: 0.5,
-                  color: '#000',
-                }}>{piece.type}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
-      </View>
-    )
+    return ( pieces && pieces.length > 0 ) && pieces.map( piece => {
+      const { position } = piece;
+      const column = position.charCodeAt( 0 ) - 65;
+      const row = GRID_SIZE - parseInt( position.charAt( 1 ), 10 );
+
+      return (
+        <View style={{
+          position: 'absolute',
+          top: row * CELL_SIZE,
+          left: column * CELL_SIZE,
+          width: CELL_SIZE,
+          height: CELL_SIZE,
+        }}>
+          <Text style={{
+            fontSize: 0.4,
+            color: '#000',
+          }}>{piece.type}</Text>
+        </View>
+      );
+    });
   }
 
   render() {
@@ -118,7 +104,6 @@ class Chessboard extends Component {
         }}>{( turn === 'white' ) ? 'Your turn!' : 'Please wait for your turn.'}</Text>
 
         <View style={{
-          position: 'absolute',
           transform: [
             { rotateX: -90 },
             { translate: [BOARD_X, BOARD_Y, BOARD_Z] },
@@ -129,9 +114,11 @@ class Chessboard extends Component {
               {_.times( GRID_SIZE, j => this.renderCell( i, j ))}
             </View>
           ))}
-        </View>
 
-        {/*{this.renderPieces()}*/}
+          <View style={{ position: 'absolute' }}>
+            {this.renderPieces()}
+          </View>
+        </View>
       </View>
     );
   }
