@@ -11,6 +11,7 @@ import {
 } from 'react-vr';
 import _ from 'lodash';
 import initialPieces from './initialPieces.js';
+import cpuMoves from './cpuMoves.js';
 
 
 const GRID_SIZE = 8;
@@ -24,7 +25,7 @@ const BOARD_Z = 0;
 class Chessboard extends Component {
   state = {
     pieces: initialPieces,
-    turn: 'white',
+    turn: 0,
   }
 
   componentDidMount() {
@@ -32,16 +33,39 @@ class Chessboard extends Component {
   }
 
   movePiece( from, to ) {
-    console.log( from, to, this.state.pieces );
+    const updatedPiece = this.state.pieces.find( p => p.position === from );
 
-    const piece = this.state.pieces.find( p => p.position === from );
-    piece.position = to;
-    console.log( piece );
+    if ( !!updatedPiece ) {
+      updatedPiece.position = to;
 
-    this.setState( state => ({
-      ...state.pieces.filter( p => p.position === from ),
-      piece,
-    }));
+      this.setState( state => ({
+        pieces: [
+          ...state.pieces.filter( p => p.position !== from ),
+          updatedPiece,
+        ],
+        turn: state.turn + 1,
+      }), () => console.log( this.state ) );
+
+      setTimeout( () => this.cpuMove(), 1000 );
+    }
+  }
+
+  cpuMove() {
+    const { turn, pieces } = this.state;
+    const { from, to } = cpuMoves[Math.floor( turn / 2 )] || { from: 0, to: 0 };
+    const updatedPiece = pieces.find( p => p.position === from );
+
+    if ( !!updatedPiece ) {
+      updatedPiece.position = to;
+
+      this.setState( state => ({
+        pieces: [
+          ...state.pieces.filter( p => p.position !== from ),
+          updatedPiece,
+        ],
+        turn: state.turn + 1,
+      }));
+    }
   }
 
   renderCell( i, j ) {
@@ -82,10 +106,11 @@ class Chessboard extends Component {
           width: CELL_SIZE,
           height: CELL_SIZE,
         }}>
-          <Text style={{
-            fontSize: 0.4,
-            color: '#000',
-          }}>{piece.type}</Text>
+          <Image source={{ uri: `../static_assets/pieces/${piece.color}_${piece.type}.png` }} style={{
+            marginHorizontal: 0.5,
+            height: 2,
+            width: 1,
+          }} />
         </View>
       );
     });
@@ -97,11 +122,13 @@ class Chessboard extends Component {
     return (
       <View>
         <Text style={{
+          position: 'absolute',
           transform: [
             { translate: [-4, 0, -BOARD_Y] },
           ],
           fontSize: 2,
-        }}>{( turn === 'white' ) ? 'Your turn!' : 'Please wait for your turn.'}</Text>
+          textAlign: 'center',
+        }}>{( turn % 2 ) ? 'Thinking...' : 'Your turn!'}</Text>
 
         <View style={{
           transform: [
