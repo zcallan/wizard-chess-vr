@@ -1,0 +1,13 @@
+*.log
+.DS_store
+node_modules/
+.idea/
+npm-debug.log
+npm-debug.log.*
+__snapshots__/
+build/js/
+build/*.woff2
+build/*.svg
+build/*.ttf
+build/*.eot
+build/*.woff
