@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-vr';
 import _ from 'lodash';
-import initialBoard from './initialBoard.js';
+import initialPieces from './initialPieces.js';
 
 
 const GRID_SIZE = 8;
@@ -22,29 +22,55 @@ const BOARD_Z = 0;
 
 class Chessboard extends Component {
   state = {
-    board: initialBoard,
+    pieces: initialPieces,
     turn: 'white',
   }
 
-  movePiece( piece, to ) {
-    console.log( piece, to, this.state.board );
+  componentDidMount() {
+    setTimeout(() => this.movePiece( 'E2', 'E4' ), 2000 );
+  }
 
+  movePiece( from, to ) {
+    console.log( from, to, this.state.pieces );
+
+    const piece = this.state.pieces.find( p => p.position === from );
+    piece.position = to;
+    console.log( piece );
+
+    this.setState( state => ({
+      ...state.pieces.filter( p => p.position === from ),
+      piece,
+    }));
   }
 
   renderCell( i, j ) {
-    const cellName = String.fromCharCode( 65 + j ) + ( GRID_SIZE - i );
+    const cellName = String.fromCharCode( 65 + j ).toUpperCase() + ( GRID_SIZE - i );
+    const piece = this.state.pieces.find( p => p.position === cellName );
 
     return (
       <View style={{
         backgroundColor: (( j + i ) % 2 ) ? '#FFF' : '#AAA',
         width: CELL_SIZE,
         height: CELL_SIZE,
+        position: 'relative',
       }}>
         <Text style={{
           color: '#000',
           fontSize: 0.2,
-        }}
-        >{cellName}</Text>
+          position: 'absolute',
+        }}>
+          {cellName}
+        </Text>
+
+        {( !!piece ) && (
+          <Text style={{
+            color: '#000',
+            fontSize: 0.4,
+            position: 'absolute',
+          }}>
+            {piece.type}
+          </Text>
+        )}
       </View>
     )
   }
@@ -105,7 +131,7 @@ class Chessboard extends Component {
           ))}
         </View>
 
-        {this.renderPieces()}
+        {/*{this.renderPieces()}*/}
       </View>
     );
   }

@@ -9,6 +9,7 @@ import {
   Image,
 } from 'react-vr';
 import Chessboard from './chessboard.vr.js';
+import Speech from './speech.vr.js';
 
 
 export default class WizardChess extends React.Component {
