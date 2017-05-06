@@ -6,6 +6,7 @@ import {
   Pano,
   Text,
   View,
+  Image,
 } from 'react-vr';
 import _ from 'lodash';
 
@@ -14,8 +15,6 @@ const CELL_SIZE = 2;
 
 export default class WizardChess extends React.Component {
   render() {
-    const ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
     return (
       <View style={{
         transform: [
@@ -28,7 +27,7 @@ export default class WizardChess extends React.Component {
               <View style={{
                 backgroundColor: (( j + i ) % 2 ) ? '#FFF' : '#AAA',
                 transform: [
-                  { translate: [-(CELL_SIZE * GRID_SIZE / 2), GRID_SIZE, 1] },
+                  { translate: [-( CELL_SIZE * GRID_SIZE / 2 ), GRID_SIZE * 2, 1] },
                 ],
                 width: CELL_SIZE,
                 height: CELL_SIZE,
@@ -38,6 +37,19 @@ export default class WizardChess extends React.Component {
                   fontSize: 0.2,
                 }}
                 >{String.fromCharCode( 65 + j ) + ( GRID_SIZE - i )}</Text>
+                <Image
+                  source={{ uri: '../static_assets/pieces/white_pawn.png' }}
+                  style={{
+                    margin: 0.5,
+                    width: 1.2,
+                    height: 1.2,
+                    transform: [
+                      { rotateX: 90 },
+                      { translateZ: -0.2 },
+                    ],
+                  }}
+                />
+
               </View>
             ))}
           </View>
